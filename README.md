@@ -27,7 +27,7 @@ Once the number of assigned request on each opened sessions exceeds given capaci
                          (gm/options {:auto-orient true})])
 ```
 
-where `:processing` is a vector of [convert options](http://www.graphicsmagick.org/convert.html). Two of them (`-crop` and `-resize`) got a little helpers in
+where `:processing` is a vector of [convert options](http://www.graphicsmagick.org/convert.html#conv-opti). Two of them (`-crop` and `-resize`) got a little helpers in
 `skalar.gm` namespace to save people from remembering crazy GM syntax. All other options can be provided via `skalar.gm/options` function in keywordized form (without
 prefixing -), so for example `{:auto-orient true}` gets translated to `-auto-orient`.
 
