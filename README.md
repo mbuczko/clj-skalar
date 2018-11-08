@@ -2,7 +2,7 @@
 
 # What is Skalar
 
-Skalar is a humble attempt to build a fast [GraphicsMagick](http://www.graphicsmagick.org/) based image-scaling library.
+Skalar is a humble attempt to build a fast [GraphicsMagick](http://www.graphicsmagick.org/) based image tranformation library.
 There are already plenty of this kind of libraries all over the world and each one is special (at least in their authors' minds ;)
 
 So, why _Skalar_?

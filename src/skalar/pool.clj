@@ -4,9 +4,6 @@
 
 (declare create-session close-session)
 
-(def temp-dir-attrs
-  (into-array java.nio.file.attribute.FileAttribute []))
-
 (defprotocol Poolable
   (reserve-session [this] "reserves session from pool adding one if capacity has been reached")
   (release-session [this session] "releases session potentially removing it from pool"))
