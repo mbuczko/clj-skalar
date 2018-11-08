@@ -70,20 +70,20 @@
        (send-off process
                  (fn [proc args]
                    (try
-                     (do
-                       ;; process a command
-                       (sh/feed-from-string proc args)
 
-                       ;; gather a feedback from session
-                       (let [feedback (sh/read-line proc :out)]
-                         (release-session pool session)
+                     ;; process a command
+                     (sh/feed-from-string proc args)
 
-                         (if (= "FAIL" feedback)
-                           (reject (Exception. "Error while processing. Possibly not a valid image."))
-                           (resolve (->> (into-array String [output])
-                                          (java.nio.file.Paths/get workdir)
-                                          (.toAbsolutePath)
-                                          (.toString))))))
+                     ;; gather a feedback from session
+                     (let [feedback (sh/read-line proc :out)]
+                       (release-session pool session)
+
+                       (if (= "FAIL" feedback)
+                         (reject (Exception. "Error while processing. Possibly not a valid image."))
+                         (resolve (->> (into-array String [output])
+                                       (java.nio.file.Paths/get workdir)
+                                       (.toAbsolutePath)
+                                       (.toString)))))
                      (catch Exception e
                        (reject e)))
                    proc)

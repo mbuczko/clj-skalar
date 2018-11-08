@@ -29,5 +29,5 @@
                           init
                           processing)
                   " " to "\n")]
-    (println cmd)
+
     (pool/send-cmd pool cmd to)))
