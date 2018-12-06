@@ -8,7 +8,7 @@
 ;; to check the newest versions:
 ;; boot -d boot-deps ancient
 
-(def +version+ "1.0.0")
+(def +version+ "1.1.0")
 (require '[adzerk.bootlaces :refer :all])
 
 (bootlaces! +version+)
