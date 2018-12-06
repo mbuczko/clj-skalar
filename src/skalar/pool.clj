@@ -1,6 +1,7 @@
 (ns skalar.pool
   (:require [me.raynes.conch.low-level :as sh]
-            [promesa.core :as p]))
+            [promesa.core :as p]
+            [clojure.java.io :as io]))
 
 (declare create-session close-session)
 
@@ -8,7 +9,7 @@
   (reserve-session [this] "reserves session from pool adding one if capacity has been reached")
   (release-session [this session] "releases session potentially removing it from pool"))
 
-(defrecord Pool [base capacity max sessions working-dir]
+(defrecord Pool [base capacity max sessions]
   Poolable
 
   (reserve-session [this]
@@ -20,7 +21,7 @@
               (< @attached capacity))
         (do (swap! attached inc) session)
         (first
-         (swap! sessions conj (create-session (inc created) 1 working-dir))))))
+         (swap! sessions conj (create-session (inc created) 1))))))
 
   (release-session [this session]
     (let [attached (swap! (:attached session) dec)]
@@ -31,16 +32,15 @@
           (swap! sessions (filter #(not (= (:id %1) id)) sessions)))
         sessions))))
 
-(defn create-proc [workdir]
-  (let [proc (sh/proc "gm" "batch" "-feedback" "on" :dir workdir)]
+(defn create-proc []
+  (let [proc (sh/proc "gm" "batch" "-feedback" "on")]
     (sh/read-line proc :out)
     proc))
 
-(defn create-pool [base capacity max & [workdir]]
-  (let [wdir (or workdir ".")
-        iter (take base (iterate inc 1))
-        sessions (doall (map #(create-session % 0 wdir) iter))]
-    (->Pool base capacity max sessions wdir)))
+(defn create-pool [base capacity max]
+  (let [iter (take base (iterate inc 1))
+        sessions (doall (map #(create-session % 0) iter))]
+    (->Pool base capacity max sessions)))
 
 (defn shutdown-pool [pool]
   (doseq [session @(:sessions pool)]
@@ -52,15 +52,14 @@
     (sh/destroy proc)
     session))
 
-(defn create-session [n attached workdir]
+(defn create-session [n attached]
   {:id       (str "gm-" n)
    :attached (atom attached)
-   :process  (agent (create-proc workdir))})
+   :process  (agent (create-proc))})
 
-(defn send-cmd [pool cmd output]
+(defn send-cmd [pool output cmd]
   (let [session (reserve-session pool)
-        process (:process session)
-        workdir (:working-dir pool)]
+        process (:process session)]
 
     (p/promise
      (fn [resolve reject]
@@ -77,11 +76,8 @@
 
                        (if (= "FAIL" feedback)
                          (reject (Exception. "Error while processing. Possibly not a valid image."))
-                         (resolve (->> (into-array String [output])
-                                       (java.nio.file.Paths/get workdir)
-                                       (.toAbsolutePath)
-                                       (.toString)))))
+                         (resolve (io/file output))))
                      (catch Exception e
                        (reject e)))
                    proc)
-                 cmd)))))
+                 (str cmd " " output "\n"))))))

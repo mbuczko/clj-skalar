@@ -21,7 +21,7 @@ Once the number of assigned request on each opened sessions exceeds given capaci
 (def input-file (io/file "photo.jpg"))
 
 (sk/convert input-file 
-            :to "photo.png"
+            :output "photo.png"
             :processing [(gm/crop 10 10 100 100)
                          (gm/resize "200x200" :exact :no-profiles)
                          (gm/options {:auto-orient true})])
@@ -38,12 +38,10 @@ So far default GraphicsMagick pool of processes (sessions) was used, but sometim
 * base  : is a number of minimum sessions that need to be kept opened and ready for incoming requests.
 * capacity : is a number of requests each session can handle. Once the number of session exceeds _capacity_ a new session is being added. 
 * max : maximum number of sessions that can be created.
-* working-dir : a directory where GM session starts in. All the paths (input and output file) are relative to this location, if not provided as absolute ones.
 
-Default pool is defined with `base=3`, `capacity=6`, `max=8`, `working-dir=.` and that simply translates to:
+Default pool is defined with `base=3`, `capacity=6`, `max=8`, and that simply translates to:
 
-_keep 3 opened sessions by default, consequently add new ones if number of requests for each existing session exceeds 6, but do not create more than 8 sessions in total;
-start GM sessions in current directory._
+_keep 3 opened sessions by default, consequently add new ones if number of requests for each existing session exceeds 6, but do not create more than 8 sessions in total_
 
 Each additionally created session will be immediately closed and removed from pool when number of request drops down to 0 at some point in time.
 
@@ -60,7 +58,7 @@ and provide it via `:pool` option:
 
 ``` clojure
 (sk/convert (sk/file-from-url "https://images-assets.nasa.gov/image/PIA20912/PIA20912~orig.jpg")
-            :to "kręcioł.png"
+            :output "kręcioł.png"
             :processing [(gm/resize "200x200")]
             :pool my-pool)
 ```
