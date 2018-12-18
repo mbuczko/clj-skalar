@@ -12,8 +12,11 @@
    opts))
 
 (defn crop
-  [x y width height]
-  ["crop" (str width "x" height "+" x "+" y)])
+  ([coords]
+   (when (vector? coords)
+     (apply crop coords)))
+  ([x y width height]
+   ["crop" (str width "x" height "+" x "+" y)]))
 
 (defn resize
   [size & opts]

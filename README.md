@@ -51,7 +51,7 @@ Let's leave theory behind and create a custom pool:
 (require '[skalar.pool :as sp])
 
 (def my-pool
-  (sp/create-pool 2 3 4 "/tmp"))
+  (sp/create-pool 2 3 4))
 ```
 
 and provide it via `:pool` option:
