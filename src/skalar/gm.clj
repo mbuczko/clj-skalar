@@ -24,4 +24,16 @@
     ["resize" (str size
                    (when (:exact resize-opts) "!")
                    (when (:no-profiles resize-opts) " +profile \"*\"")
-                   (when (:thumbnail resize-opts) " -thumbnail"))]))
+                   (when (:thumbnail resize-opts) " -thumbnail")
+
+                   ;; give a hint to the JPEG decoder that the image is going to be downscaled
+                   ;; allowing it to run faster by avoiding returning full-resolution images to
+                   ;; GraphicsMagick for the subsequent resizing operation: http://www.graphicsmagick.org/convert.html
+
+                   " -size " size)]))
+
+(defn thumbnail
+  [size]
+  ["thumbnail" (str size
+                    " +profile \"*\""
+                    " -size " size)])
