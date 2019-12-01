@@ -1,0 +1,4 @@
+{:revolt.task/info {:name "skalar"
+                    :package defunkt.skalar
+                    :version "1.2.1"
+                    :description "Image manipulation with GM"}}
